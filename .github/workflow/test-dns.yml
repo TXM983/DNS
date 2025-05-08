@@ -1,0 +1,26 @@
+name: Test DNS for www.aimiliy.top
+
+on:
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  dns-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check DNS record with nslookup
+        run: |
+          echo "::group::DNS Lookup"
+          nslookup www.aimiliy.top
+          echo "::endgroup::"
+
+      - name: Curl to test final resolved content
+        run: |
+          echo "::group::Curl Response"
+          curl -I https://www.aimiliy.top
+          echo "::endgroup::"
+
+      - name: Output resolved IP
+        run: |
+          echo "::group::Resolved IP"
+          dig www.aimiliy.top +short
+          echo "::endgroup::"
