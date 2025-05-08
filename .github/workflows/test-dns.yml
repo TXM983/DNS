@@ -1,6 +1,12 @@
 name: Test DNS for www.aimiliy.top
 
 on:
+  push:
+    branches:
+      - main  # 你可以根据需要修改为你的主分支，比如 master 或其他
+  pull_request:
+    branches:
+      - main  # 当有 pull request 向 main 分支发起时也会触发构建
   workflow_dispatch:  # 允许手动触发
 
 jobs:
