@@ -16,17 +16,17 @@ jobs:
       - name: Check DNS record with nslookup
         run: |
           echo "::group::DNS Lookup"
-          nslookup www.aimiliy.top
+          nslookup miraii.cn
           echo "::endgroup::"
 
       - name: Curl to test final resolved content
         run: |
           echo "::group::Curl Response"
-          curl -I https://www.aimiliy.top
+          curl -I https://miraii.cn
           echo "::endgroup::"
 
       - name: Output resolved IP
         run: |
           echo "::group::Resolved IP"
-          dig www.aimiliy.top +short
+          dig miraii.cn +short
           echo "::endgroup::"
