@@ -13,6 +13,10 @@ jobs:
   dns-test:
     runs-on: ubuntu-latest
     steps:
+      - name: Curl Request to CDN
+        run: |
+          echo ">>> Start testing your CDN API"
+          curl -I -w "\nTotal time: %{time_total}s\n" -s https://busuanzi.miraii.cn/api/
       - name: Check DNS record with nslookup
         run: |
           echo "::group::DNS Lookup"
