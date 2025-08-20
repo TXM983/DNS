@@ -1,36 +1,56 @@
-name: Test DNS for www.aimiliy.top
+name: Test DNS and CDN for miraii.cn
 
 on:
   push:
     branches:
-      - main  # 你可以根据需要修改为你的主分支，比如 master 或其他
+      - main
   pull_request:
     branches:
-      - main  # 当有 pull request 向 main 分支发起时也会触发构建
-  workflow_dispatch:  # 允许手动触发
+      - main
+  workflow_dispatch:
 
 jobs:
   dns-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Curl Request to CDN
+      # 1. 测试 CDN 或 API 响应
+      - name: Test CDN/API Response
         run: |
-          echo ">>> Start testing your CDN API"
-          curl -I -w "\nTotal time: %{time_total}s\n" -s https://busuanzi.miraii.cn/api/
-      - name: Check DNS record with nslookup
+          echo ">>> Start testing your CDN/API"
+          curl -I -w "\nTotal time: %{time_total}s\nHTTP Code: %{http_code}\n" -s https://busuanzi.aimiliy.top/api/
+
+      # 2. DNS 基本解析
+      - name: Basic DNS Lookup
         run: |
-          echo "::group::DNS Lookup"
+          echo "::group::DNS Lookup (nslookup)"
           nslookup miraii.cn
           echo "::endgroup::"
 
-      - name: Curl to test final resolved content
+      # 3. DNS 使用 dig 查询详细信息
+      - name: Detailed DNS Info
         run: |
-          echo "::group::Curl Response"
-          curl -I https://miraii.cn
+          echo "::group::Detailed DNS Info (dig)"
+          dig miraii.cn +short +nocmd
+          dig miraii.cn A +short
+          dig miraii.cn AAAA +short
+          dig miraii.cn CNAME +short
           echo "::endgroup::"
 
-      - name: Output resolved IP
+      # 4. 测试最终访问结果
+      - name: Test Final HTTP Response
         run: |
-          echo "::group::Resolved IP"
-          dig miraii.cn +short
+          echo "::group::Curl Final Response"
+          curl -I -L https://miraii.cn
+          echo "::endgroup::"
+
+      # 5. 分地理位置测试（可选）
+      - name: Test Resolved IP from Multiple DNS Servers
+        run: |
+          echo "::group::GeoDNS Check"
+          echo "Google DNS:"
+          dig @8.8.8.8 miraii.cn +short
+          echo "Cloudflare DNS:"
+          dig @1.1.1.1 miraii.cn +short
+          echo "Aliyun DNS (China):"
+          dig @223.5.5.5 miraii.cn +short
           echo "::endgroup::"
